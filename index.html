@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#15213b">
+<meta name="format-detection" content="telephone=no">
+<title>無料個別相談会 申込フォーム</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Zen+Kaku+Gothic+New:wght@700;900&display=swap">
+<script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<style>
+:root{
+  --navy:#15213b; --navy-2:#22335a; --navy-soft:#eef2fa; --accent:#f2c200; --accent-2:#ffd43b; --accent-deep:#b88d00;
+  --ground:#e9e8e2; --paper:#ffffff; --ink:#1d2026; --muted:#5c6068; --line:#dcdbd3; --line-strong:#b9b8b0;
+  --red:#d7263d; --ok:#2c9a2c; --soft:#fbf3d6; --green:#06c755; --green-deep:#04994a; --blue:#1a5fb4;
+}
+html{color-scheme:light;background:var(--ground);height:100%}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);min-height:100%;
+  font-family:"Noto Sans JP","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+  font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+.disp{font-family:"Zen Kaku Gothic New","Noto Sans JP","Hiragino Sans",sans-serif;font-weight:900}
+button{font-family:inherit}
+
+/* ---- app frame ---- */
+.app{max-width:480px;margin:0 auto;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;background:var(--paper);position:relative}
+.top{position:sticky;top:0;z-index:6;background:var(--navy);color:#fff;display:grid;grid-template-columns:48px 1fr 48px;align-items:center;height:54px;padding:0 4px}
+.back{width:44px;height:44px;border:0;background:transparent;color:#fff;border-radius:50%;display:grid;place-items:center;cursor:pointer}
+.back:focus-visible{outline:2px solid var(--accent)}
+.back[hidden]{visibility:hidden;display:grid}
+.back svg{width:22px;height:22px}
+.ttl{text-align:center;font-size:15px;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cnt{font-size:12px;text-align:center;color:#cfd6e6;font-variant-numeric:tabular-nums}
+.prog{position:sticky;top:54px;z-index:6;height:4px;background:#0b1224}
+.prog i{display:block;height:100%;width:0;background:var(--accent);transition:width .35s ease}
+main{flex:1;padding:22px 18px 130px}
+main.anim{animation:slidein .22s ease-out}
+@keyframes slidein{from{opacity:.4;transform:none}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){main.anim{animation:none}.prog i{transition:none}}
+
+.q{font-size:21px;line-height:1.35;margin:0 0 6px;text-wrap:balance}
+.sub{margin:0 0 16px;color:var(--muted);font-size:13.5px}
+.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;padding:2px 9px;border-radius:999px;background:var(--navy-soft);color:var(--navy);margin-bottom:10px}
+.tag.optional{background:#efeee8;color:var(--muted)}
+
+/* ---- option rows ---- */
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font-size:16px;font-weight:700;padding:13px 14px 13px 16px;
+  border:1.5px solid var(--line-strong);border-radius:12px;background:#fff;color:var(--ink);cursor:pointer;min-height:58px;transition:background .12s,border-color .12s}
+.opt .tx{flex:1}
+.opt small{display:block;font-weight:400;font-size:12px;color:var(--muted);line-height:1.4;margin-top:1px}
+.opt .ic{flex:0 0 24px;width:24px;height:24px;border-radius:50%;border:2px solid var(--line-strong);position:relative;transition:.12s}
+.opt.multi .ic{border-radius:7px}
+.opt .ic::after{content:"";position:absolute;left:7px;top:3px;width:6px;height:11px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(45deg);opacity:0}
+.opt.on{border-color:var(--navy);background:var(--navy-soft);box-shadow:inset 0 0 0 1px var(--navy)}
+.opt.on .ic{background:var(--navy);border-color:var(--navy)}
+.opt.on .ic::after{opacity:1}
+.opt:focus-visible{outline:3px solid rgba(242,194,0,.7);outline-offset:2px}
+.opt .em{font-size:20px;flex:0 0 28px;text-align:center}
+
+/* ---- date grid ---- */
+.dates{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.day{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;border:1.5px solid var(--line-strong);border-radius:12px;background:#fff;
+  padding:9px 4px 8px;cursor:pointer;color:var(--ink);min-height:64px;transition:.12s}
+.day small{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.06em}
+.day b{font-size:17px;font-weight:900;line-height:1.2;font-variant-numeric:tabular-nums;font-family:"Zen Kaku Gothic New","Noto Sans JP",sans-serif}
+.day .mo{font-size:10px;color:var(--muted);font-weight:400}
+.day.sat small{color:var(--blue)} .day.sun small{color:var(--red)}
+.day.on{background:var(--navy);border-color:var(--navy);color:#fff;box-shadow:0 3px 0 #0b1224}
+.day.on small,.day.on .mo{color:#dfe5f3}
+.day:focus-visible{outline:3px solid rgba(242,194,0,.7);outline-offset:2px}
+.legend{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin:0 0 8px}
+
+/* ---- intro ---- */
+.hero{margin:-22px -18px 18px;background:var(--navy);color:#fff;padding:22px 20px 24px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;right:-60px;top:-70px;width:200px;height:200px;border-radius:50%;background:var(--accent);opacity:.14}
+.hero>*{position:relative}
+.eyebrow{display:inline-block;background:var(--accent);color:var(--navy);font-size:11.5px;letter-spacing:.08em;padding:3px 11px;border-radius:999px}
+.hero h1{margin:12px 0 6px;font-size:25px;line-height:1.3}
+.hero h1 span{color:var(--accent-2)}
+.hero p{margin:0;color:#cdd5e6;font-size:13.5px}
+.host{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:12.5px;color:#e6eaf3}
+.host .av{flex:0 0 40px;width:40px;height:40px;border-radius:50%;background:var(--navy-2);border:2.5px solid var(--accent);overflow:hidden;display:grid;place-items:center}
+.host .av img{width:100%;height:100%;object-fit:cover;display:block}
+.host b{display:block;font-size:13.5px}
+.hello{display:flex;align-items:center;gap:12px;background:var(--navy-soft);border-radius:12px;padding:12px 14px;margin:0 0 16px}
+.hello .pic{width:44px;height:44px;border-radius:50%;background:var(--navy);flex:0 0 44px;overflow:hidden;display:grid;place-items:center;color:#fff;font-weight:900}
+.hello .pic img{width:100%;height:100%;object-fit:cover}
+.hello b{display:block;font-size:15px}
+.hello small{color:var(--muted);font-size:12px}
+.steps{list-style:none;margin:0 0 18px;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.steps li{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;font-size:12px;line-height:1.35;font-weight:700;position:relative}
+.steps li b{width:26px;height:26px;border-radius:50%;background:var(--navy);color:var(--accent-2);display:grid;place-items:center;font-size:13px}
+.steps li small{display:block;font-weight:400;color:var(--muted);font-size:11px}
+.steps li+li::before{content:"";position:absolute;left:-6px;top:12px;width:6px;height:2px;background:var(--line-strong)}
+.pts{margin:0 0 6px;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+.pts li{font-size:12.5px;font-weight:700;background:var(--soft);border-radius:999px;padding:3px 11px}
+.note{font-size:12.5px;color:var(--muted);margin:0 0 12px}
+
+/* ---- confirm ---- */
+.sumlist{margin:0 0 14px;padding:0;list-style:none;border:1.5px solid var(--line);border-radius:12px;overflow:hidden}
+.sumlist li{display:grid;grid-template-columns:96px 1fr auto;gap:8px;align-items:center;padding:11px 12px;border-top:1px solid var(--line);font-size:14px}
+.sumlist li:first-child{border-top:0}
+.sumlist .k{font-size:12px;color:var(--muted);font-weight:700}
+.sumlist .v{font-weight:700;line-height:1.4}
+.sumlist .v small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.sumlist .ed{font:inherit;font-size:12px;font-weight:700;color:var(--navy);background:var(--navy-soft);border:0;border-radius:999px;padding:5px 11px;cursor:pointer}
+.consent{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;font-size:13.5px;line-height:1.55;padding:13px 14px;background:var(--soft);border:1.5px solid transparent;border-radius:12px;cursor:pointer;color:var(--ink)}
+.consent .ic{flex:0 0 24px;width:24px;height:24px;border-radius:7px;border:2px solid var(--accent-deep);background:#fff;position:relative;margin-top:1px}
+.consent .ic::after{content:"";position:absolute;left:7px;top:3px;width:6px;height:11px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(45deg);opacity:0}
+.consent.on{border-color:var(--navy)}
+.consent.on .ic{background:var(--navy);border-color:var(--navy)}
+.consent.on .ic::after{opacity:1}
+.consent b{display:block;font-size:14.5px}
+.consent:focus-visible{outline:3px solid rgba(242,194,0,.7)}
+
+/* ---- done ---- */
+.done{text-align:center;padding-top:10px}
+.done .check{width:72px;height:72px;border-radius:50%;background:var(--ok);color:#fff;display:grid;place-items:center;font-size:36px;margin:6px auto 14px}
+.done .check.warn{background:var(--accent);color:var(--navy);font-size:30px}
+.done h2{font-size:22px;margin:0 0 8px}
+.done .lead{text-align:left;margin:0 0 14px;font-size:14.5px;text-wrap:pretty}
+.done .lead b{color:var(--red)}
+.rcpt{display:inline-block;font-size:12.5px;color:var(--muted);background:#f4f4f0;border-radius:999px;padding:3px 12px;margin-bottom:14px;font-variant-numeric:tabular-nums}
+.btn-line{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--green);color:#fff;text-decoration:none;
+  font-size:18px;padding:16px 18px;border-radius:12px;box-shadow:0 4px 0 var(--green-deep);margin:0 0 10px;border:0;width:100%;cursor:pointer}
+.btn-line:active{transform:translateY(3px);box-shadow:0 1px 0 var(--green-deep)}
+.btn-line svg{width:26px;height:26px;flex:0 0 26px}
+.summary{margin:16px 0 6px;text-align:left}
+.summary-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:12.5px;letter-spacing:.1em;color:var(--navy)}
+.summary-h button{font:inherit;font-weight:700;font-size:12.5px;letter-spacing:0;border:1.5px solid var(--navy);background:#fff;color:var(--navy);border-radius:999px;padding:4px 14px;cursor:pointer}
+.summary-h button.ok{background:var(--navy);color:#fff}
+.summary textarea{width:100%;font:inherit;font-size:13.5px;background:#fafaf7;border:1.5px solid var(--line-strong);border-radius:8px;padding:10px 12px;min-height:150px;resize:vertical}
+.gift{margin:14px 0 0;padding:12px 14px;background:var(--soft);border-radius:10px;font-size:13.5px;text-align:left}
+.gift b{color:var(--red)}
+.tiny{font-size:11.5px;color:var(--muted);text-align:left;margin:12px 0 0}
+
+/* ---- bottom action bar ---- */
+.act{position:fixed;left:0;right:0;bottom:0;z-index:7;padding:14px 18px calc(14px + env(safe-area-inset-bottom));
+  background:linear-gradient(rgba(255,255,255,0),#fff 35%);pointer-events:none}
+.act .inner{max-width:444px;margin:0 auto;display:flex;gap:10px;pointer-events:auto}
+.act:empty{display:none}
+.btn{flex:1;font-weight:900;font-size:17px;border:0;border-radius:12px;padding:15px 12px;cursor:pointer;transition:transform .08s,box-shadow .08s;font-family:"Zen Kaku Gothic New","Noto Sans JP",sans-serif}
+.btn.pri{background:linear-gradient(#ffd43b,#f2c200);color:var(--navy);box-shadow:0 4px 0 var(--accent-deep)}
+.btn.pri:active{transform:translateY(3px);box-shadow:0 1px 0 var(--accent-deep)}
+.btn.pri[disabled]{opacity:.45;box-shadow:none;cursor:not-allowed;transform:none}
+.btn.sec{flex:0 0 auto;background:#fff;border:1.5px solid var(--line-strong);color:var(--ink);padding:15px 16px;font-weight:700;font-size:15px;font-family:inherit}
+.btn:focus-visible{outline:3px solid var(--navy);outline-offset:3px}
+.foot{padding:0 18px 20px;font-size:11.5px;color:var(--muted);line-height:1.6;text-align:center}
+
+/* ---- 読み込み中・お知らせ ---- */
+.loading{display:flex;align-items:center;gap:12px;padding:18px 16px;border:1.5px dashed var(--line-strong);border-radius:12px;color:var(--muted);font-size:14px;margin-bottom:12px}
+.spin{width:22px;height:22px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--navy);animation:spin .8s linear infinite;flex:0 0 22px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+.notice{padding:12px 14px;background:var(--soft);border-radius:12px;font-size:13.5px;margin-bottom:12px;line-height:1.55}
+.notice b{display:block;font-size:14.5px;margin-bottom:2px}
+.chosen{display:inline-block;background:var(--navy-soft);color:var(--navy);font-weight:700;font-size:12.5px;padding:3px 10px;border-radius:999px;margin-bottom:12px}
+
+
+/* 特典LPの紙面構成を使った申込フォーム */
+:root{--ground:#f2f1ec;--navy-soft:#eef3f8;--line:#e3e3e0;--line-strong:#c7cbd1;--mark:#fff176}
+html{scroll-padding-top:120px}
+body{line-height:1.8}
+.app{max-width:540px;box-shadow:0 8px 40px rgba(21,33,59,.08)}
+.top{height:52px;background:#fff;color:var(--navy);padding:0 12px;grid-template-columns:44px 1fr 44px;border-top:4px solid var(--accent)}
+.ttl{font-size:12px;letter-spacing:.08em}
+.back{color:var(--navy)}
+.cnt{color:var(--muted);font-size:11px}
+.prog{top:52px;height:3px;background:#e8e9eb}
+.flow{position:sticky;top:55px;z-index:5;background:#fff;display:flex;justify-content:center;gap:16px;padding:11px 12px;border-bottom:1px solid var(--line);font-size:11px;font-weight:700;color:var(--muted)}
+.flow span{display:flex;align-items:center;gap:6px}
+.flow b{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#f0f1f3;font-size:11px}
+.flow .current{color:var(--navy)}
+.flow .current b{background:var(--navy);color:#fff}
+.flow .complete b{background:var(--accent);color:var(--navy)}
+main{padding:0 24px 28px}
+main:focus{outline:none}
+mark{background:linear-gradient(transparent 48%,var(--mark) 48%);color:inherit;padding:0 2px;font-weight:700}
+.intro-sheet{text-align:center}
+.intro-kicker{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--muted);margin:24px 0 12px}
+.intro-sheet h1{font-size:36px;line-height:1.5;letter-spacing:.04em;color:var(--navy);margin:0 0 16px}
+.intro-sheet h1 mark{padding:0 8px}
+.intro-lead{font-size:13px;line-height:1.9;margin:0 0 24px}
+.lp-bar{background:var(--navy);color:#fff;margin:0 -24px 22px;padding:13px 16px;font-size:15px;line-height:1.7;letter-spacing:.02em}
+.speaker{display:flex;align-items:flex-start;gap:12px;text-align:left;margin-bottom:22px}
+.speaker-avatar{width:48px;height:48px;flex:0 0 48px;border:3px solid var(--accent);border-radius:50%;overflow:hidden;background:var(--navy)}
+.speaker-avatar img{display:block;width:100%;height:100%;object-fit:cover}
+.speech{position:relative;flex:1;min-width:0;background:var(--navy-soft);padding:12px 14px;border-radius:8px;font-size:12px;line-height:1.9}
+.speech::before{content:"";position:absolute;left:-7px;top:18px;border:7px solid transparent;border-left:0;border-right-color:var(--navy-soft)}
+.speaker-name{display:block;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.04em;margin-bottom:4px}
+.session-facts{display:grid;grid-template-columns:repeat(3,1fr);margin:0 0 22px;padding:0}
+.session-facts>div+div{border-left:1px solid var(--line)}
+.session-facts dt{font-size:10px;color:var(--muted);font-weight:700;margin-bottom:3px}
+.session-facts dd{margin:0;font-family:"Zen Kaku Gothic New",sans-serif;font-size:20px;font-weight:900;color:var(--navy);line-height:1.3}
+.session-facts dd span{font-size:11px;margin-left:4px}
+.session-facts>div:first-child dd{color:var(--red)}
+.benefit{display:flex;gap:16px;align-items:center;text-align:left;border-top:2px solid var(--accent);border-bottom:2px solid var(--accent);background:#fffaf0;padding:15px 12px;margin-bottom:26px}
+.benefit-seal{flex:0 0 68px;text-align:center;line-height:1;color:var(--navy)}
+.benefit-seal>span{display:block;font-size:10px;line-height:1.4}
+.benefit-seal strong{display:block;font-size:43px;color:var(--red);line-height:1.05}
+.benefit>div:last-child{flex:1}
+.benefit b{font-size:13px;color:var(--red);line-height:1.7;display:block}
+.benefit p{font-size:11px;line-height:1.8;margin:5px 0 0}
+.guide-title{font-size:15px;color:var(--navy);margin:0 0 15px;display:flex;align-items:center;gap:8px}
+.guide-title::before{content:"";display:block;width:4px;height:18px;background:var(--accent)}
+.steps{display:flex;flex-direction:column;gap:0;margin:0;padding:0;list-style:none}
+.steps li{flex-direction:row;text-align:left;align-items:flex-start;gap:12px;font-size:12px;line-height:1.7;padding:0 0 14px}
+.steps li:last-child{padding-bottom:0}
+.steps li b{flex:0 0 28px;width:28px;height:28px;font-size:11px;border-radius:50%;color:var(--navy);background:#fff2c2;z-index:1}
+.steps li small{font-size:10px;color:var(--muted);font-weight:400}
+.steps li+li::before{left:13px;top:-22px;height:30px;width:1px;background:#e1d6b2}
+.question-head{margin:0 -24px 22px;background:var(--navy);color:#fff;padding:24px}
+.tag{background:var(--accent);color:var(--navy);font-size:10px;padding:2px 8px;line-height:1.6;border-radius:3px;margin-bottom:10px;letter-spacing:.08em}
+.tag.optional{background:#eef3f8;color:var(--navy)}
+.q{font-size:24px;line-height:1.6;letter-spacing:.01em;text-wrap:pretty;margin:0}
+.question-guide{align-items:center;gap:10px;margin-bottom:24px}
+.question-guide .speaker-avatar{width:40px;height:40px;flex-basis:40px;border-width:2px}
+.question-guide .speech{font-size:12px;padding:10px 12px;line-height:1.8}
+.question-guide .speech::before{top:14px}
+.opts{gap:10px}
+.opt{flex-direction:row-reverse;justify-content:flex-end;gap:12px;border:1px solid var(--line-strong);border-radius:6px;padding:15px 14px;font-size:14px;line-height:1.65;min-height:58px;box-shadow:none}
+.opt .tx{flex:1;min-width:0;overflow-wrap:anywhere}
+.opt .em{display:none}
+.opt .ic{width:22px;height:22px;flex-basis:22px;border-width:1.5px}
+.opt .ic::after,.consent .ic::after{left:6px;top:2px}
+.opt.multi .ic{border-radius:4px}
+.opt.on{border-color:#b88d00;background:#fff8dc;box-shadow:inset 0 0 0 1px #b88d00}
+.opt.on .ic{background:var(--navy);border-color:var(--navy)}
+.dates{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0 18px}
+.day{min-height:68px;border-width:1px;border-radius:6px;padding:7px 3px;gap:3px}
+.day small{font-size:11px}
+.day b{font-size:20px}
+.day.on{background:#fff2c2;border-color:#b88d00;color:var(--navy);box-shadow:inset 0 0 0 1px #b88d00}
+.day.on small{color:var(--navy)}
+.legend{display:flex;gap:10px;align-items:flex-start;font-size:10px;line-height:1.7}
+.legend>span:first-child{font-weight:700;color:var(--navy);white-space:nowrap}
+.legend>span:last-child{text-align:right}
+.chosen{border-radius:4px;padding:5px 10px;background:#fff2c2;font-size:12px;margin-bottom:16px}
+.sumlist{border-width:1px;border-radius:6px;margin-bottom:20px}
+.sumlist li{grid-template-columns:76px minmax(0,1fr) auto;font-size:13px;gap:8px;padding:14px 12px}
+.sumlist .v{overflow-wrap:anywhere;line-height:1.7}
+.sumlist .k{font-size:11px}
+.sumlist .ed{min-width:44px;min-height:44px;border-radius:4px;padding:5px;font-size:11px;background:transparent;text-decoration:underline;text-underline-offset:4px}
+.consent{border-radius:6px;padding:14px 12px;font-size:12px;line-height:1.8;gap:10px}
+.consent b{font-size:13px}
+.consent .ic{width:22px;height:22px;flex-basis:22px;border-radius:4px}
+.act{width:min(100%,540px);left:50%;right:auto;transform:translateX(-50%);background:#fff;border-top:1px solid var(--line);padding:14px 24px calc(18px + env(safe-area-inset-bottom))}
+.act .inner{max-width:none;gap:8px}
+.btn{min-height:54px;border-radius:10px;padding:14px 12px;font-size:17px}
+.btn.pri{box-shadow:0 3px 0 var(--accent-deep)}
+.btn.pri:disabled{opacity:1;background:#eeeef0;color:#777b83;box-shadow:none}
+.btn.sec{font-size:12px;padding:12px 10px}
+.foot{padding:0 24px 112px;font-size:10px;line-height:1.9}
+.app[data-screen="done"] .foot{padding-bottom:24px}
+.done{padding-top:28px}
+.done h2{font-size:24px;line-height:1.6}
+.done .lead{font-size:14px;line-height:1.9}
+.summary textarea{font-size:16px;line-height:1.8}
+.summary-h button{min-height:44px;border-radius:6px}
+.gift{font-size:12px;line-height:1.9;border-radius:6px;border-left:3px solid var(--accent)}
+.notice{border-left:3px solid var(--accent);border-radius:6px}
+.tiny{font-size:11px;line-height:1.9}
+.hello{margin-top:0}
+button:focus-visible,a:focus-visible,textarea:focus-visible{outline:3px solid #947100;outline-offset:3px}
+@media(hover:hover){.opt:not(.on):hover,.day:not(.on):hover{background:#fffdf3;border-color:#b88d00}.btn.pri:not(:disabled):hover{background:linear-gradient(#ffdf64,#f2c200)}}
+@media(min-width:600px){body{padding:32px 0}.app{min-height:calc(100dvh - 64px)}.intro-sheet h1{font-size:42px}.lp-bar{font-size:17px}.benefit{padding:18px 26px}.benefit b{font-size:15px}.speech{font-size:13px}.steps li{font-size:13px}}
+@media(max-width:360px){main{padding-left:18px;padding-right:18px}.question-head{margin-left:-18px;margin-right:-18px;padding:20px 18px}.lp-bar{margin-left:-18px;margin-right:-18px;font-size:13px}.intro-sheet h1{font-size:32px}.q{font-size:21px}.flow{gap:10px}.benefit{gap:10px;padding:12px 8px}.benefit b{font-size:12px}.benefit-seal{flex-basis:58px}.sumlist li{grid-template-columns:64px minmax(0,1fr) auto;padding:12px 8px}.act{padding-left:18px;padding-right:18px}.speech{padding:10px;font-size:11px}}
+@media(prefers-reduced-motion:reduce){.opt,.day,.opt .ic{transition:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <button class="back" id="back" type="button" aria-label="前の質問に戻る" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="ttl disp" id="ttl">無料個別相談会 申込</div>
+    <div class="cnt" id="cnt"></div>
+  </header>
+  <div class="prog" aria-hidden="true"><i id="bar"></i></div>
+  <nav class="flow" id="flow" aria-label="申込の進み具合"></nav>
+  <main id="screen" tabindex="-1"></main>
+  <footer class="foot">※『10大特典』の受け取りは無料個別相談会の参加者のみです。特典は予告なく内容の変更・終了をする場合があります。<br>© Yoichi</footer>
+  <footer class="act" id="act"></footer>
+</div>
+
+<script>
+/* =====================================================================
+   設定：ここだけ書き換えればOK（手順は README.md）
+   ===================================================================== */
+const CONFIG = {
+  // LIFF ID（LINE Developers → LINEログインチャネル → LIFF）。入れると、LINEの中で開いたときに
+  // 名前を自動取得して、申込がそのままLINEのトークに届く。日程確定のLINE自動送信にも必要。
+  LIFF_ID: "",
+
+  // 公式LINEのベーシックID（例: "@123abcde"）。LIFFが使えない環境（PCブラウザ等）の予備ルート：
+  // 申込内容が入力済みの状態でLINEのトークが開く。
+  LINE_ID: "",
+
+  // 申込データの送信先＝空き枠の取得元（gas_受付.gs をデプロイしたウェブアプリのURL）。
+  // 入れると、スプレッドシート「空き枠」シートの内容（スタッフがいつでも変更できる）が候補日として出る。
+  POST_URL: "",
+
+  // 空き枠の取得を何ミリ秒待つか。間に合わなければ下の「予備の候補日」を使う
+  AVAIL_TIMEOUT_MS: 6000,
+
+  // LINE以外のブラウザで開いたときもLINEログインを求めるか（true にすると外部ブラウザでも名前・IDを取得できるが、ログイン画面が1回はさまる）
+  LOGIN_OUTSIDE_LINE: false,
+
+  HOST_NAME: "Yoichi",
+
+  // ---- 予備の候補日（POST_URL が空、または空き枠が取得できないときに使う）----
+  DATE_RANGE_DAYS: 14,      // 明日から何日分
+  START_OFFSET_DAYS: 1,
+  EXCLUDE_WEEKDAYS: [],     // 除外する曜日（0=日 1=月 … 6=土）例 [0, 6]
+  SLOTS: ["10:00〜12:00", "12:00〜14:00", "14:00〜16:00", "16:00〜18:00", "18:00〜20:00", "20:00〜22:00"],
+
+  // 「時間帯はどれでもOK」「どの日でもOK」の文言
+  ANY_SLOT_LABEL: "どの時間帯でもOK",
+  ANY_DATE_LABEL: "どの日でもOK（相談して決める）",
+
+  // 現在の状況
+  STATUS: ["会社員・公務員", "医療・介護・福祉職", "主婦・主夫", "学生", "フリーランス・自営業", "その他"],
+
+  // AI副業の経験
+  EXPERIENCE: ["まったくの未経験", "ChatGPTなどを触ったことはある", "Claude Codeを使ったことがある", "副業で少し収益が出ている"],
+
+  // 相談したいこと（複数選択。最後の項目は「まだ決まっていない」扱いで、選ぶと他が外れる）
+  TOPICS: ["何から始めればいいか知りたい", "noteで稼ぐ方法を知りたい", "Claude Codeの導入でつまずいている", "案件（LP・翻訳）の取り方を知りたい", "本業と両立できるか不安", "10大特典の使い方を知りたい", "まだ決まっていない"],
+
+  // まず目指したい収入
+  GOALS: ["まず月5万円", "月10万円", "月30万円以上", "本業を辞められるくらい", "まだ決めていない"],
+};
+
+(function () {
+  "use strict";
+  const $ = (s, el) => (el || document).querySelector(s);
+  const WD = ["日", "月", "火", "水", "木", "金", "土"];
+  const state = {
+    a: {}, i: 0, hist: [], profile: null, liffReady: false, inClient: false, receipt: null, src: "",
+    editReturnAfter: null, consent: false, result: null, busy: false, timer: null,
+    avail: null,          // null=読み込み中 / {dates:[...], source:"sheet"|"config"|"closed"}
+    availReq: 0,
+  };
+
+  // どのページから来たか（LPのリンクに ?src=lp-p33 のように付く。LIFF経由では liff.state に入る）
+  const params = new URLSearchParams(location.search);
+  state.src = params.get("src") || "";
+  if (!state.src && params.get("liff.state")) {
+    try { state.src = new URLSearchParams(params.get("liff.state").replace(/^\?/, "")).get("src") || ""; } catch (e) {}
+  }
+
+  // ---------------------------------------------------------------- 日付
+  const pad = (n) => String(n).padStart(2, "0");
+  const iso = (d) => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+  const todayIso = () => iso(new Date());
+  function dateObj(value, slots) {
+    const [y, m, d] = value.split("-").map(Number);
+    return { value, m, d, wd: new Date(y, m - 1, d).getDay(), slots: slots || null };
+  }
+  function configDates() {
+    const out = [], d = new Date();
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() + CONFIG.START_OFFSET_DAYS);
+    let guard = 0;
+    while (out.length < CONFIG.DATE_RANGE_DAYS && guard++ < 90) {
+      if (!CONFIG.EXCLUDE_WEEKDAYS.includes(d.getDay())) out.push(dateObj(iso(d), null));
+      d.setDate(d.getDate() + 1);
+    }
+    return out;
+  }
+  function fmtDate(v) {
+    if (!v) return "";
+    if (v === "any") return CONFIG.ANY_DATE_LABEL;
+    const [y, m, d] = v.split("-").map(Number);
+    return m + "/" + d + "（" + WD[new Date(y, m - 1, d).getDay()] + "）";
+  }
+
+  // ---------------------------------------------------------------- 空き枠（スプレッドシートから取得）
+  function setAvail(dates, source) {
+    state.avail = { dates, source };
+    // 読み込み前に選んでいた日が候補から消えていたら選び直してもらう
+    ["date1", "date2"].forEach((k) => { const v = state.a[k]; if (v && v !== "any" && !dates.some((x) => x.value === v)) { state.a[k] = ""; state.a[k === "date1" ? "slot1" : "slot2"] = ""; } });
+    if (STEPS[state.i].type === "date") render();
+  }
+  function normSlot(s) {
+    if (typeof s === "string") return { label: s.trim(), remaining: null, capacity: null };
+    if (!s || typeof s !== "object" || !s.label) return null;
+    const rem = Number(s.remaining), cap = Number(s.capacity);
+    return { label: String(s.label).trim(), remaining: isFinite(rem) ? rem : null, capacity: isFinite(cap) ? cap : null };
+  }
+  function parseAvail(data) {
+    if (!data || data.ok === false) throw new Error("bad response");
+    if (data.source === "none" || !Array.isArray(data.dates)) return null; // 空き枠シート未設定 → 予備の候補日
+    const today = todayIso();
+    return data.dates
+      .filter((x) => x && /^\d{4}-\d{2}-\d{2}$/.test(String(x.date)) && String(x.date) >= today && Array.isArray(x.slots))
+      .map((x) => dateObj(String(x.date), x.slots.map(normSlot).filter((o) => o && o.label && (o.remaining === null || o.remaining > 0))))
+      .filter((x) => x.slots.length)
+      .sort((a, b) => (a.value < b.value ? -1 : 1));
+  }
+  function loadAvailability(url) {
+    url = url === undefined ? CONFIG.POST_URL : url;
+    const req = ++state.availReq;
+    if (!url) { setAvail(configDates(), "config"); return; }
+    state.avail = null;
+    if (STEPS[state.i].type === "date") render();
+    const cb = "__soudanSlots_" + req;
+    let done = false, timer = null, tag = null;
+    const finish = (dates, source) => {
+      if (done || req !== state.availReq) return;
+      done = true;
+      clearTimeout(timer);
+      try { delete window[cb]; } catch (e) { window[cb] = undefined; }
+      if (tag && tag.parentNode) tag.parentNode.removeChild(tag);
+      setAvail(dates, source);
+    };
+    window[cb] = (data) => {
+      try {
+        const dates = parseAvail(data);
+        if (dates === null) finish(configDates(), "config");
+        else finish(dates, dates.length ? "sheet" : "closed");
+      } catch (e) { finish(configDates(), "config"); }
+    };
+    tag = document.createElement("script");
+    tag.src = url + (url.includes("?") ? "&" : "?") + "action=slots&callback=" + cb + "&_=" + Date.now();
+    tag.onerror = () => finish(configDates(), "config");
+    timer = setTimeout(() => finish(configDates(), "config"), CONFIG.AVAIL_TIMEOUT_MS);
+    document.head.appendChild(tag);
+  }
+  function availDates() { return state.avail ? state.avail.dates : []; }
+  function slotsFor(dateValue) {
+    const d = availDates().find((x) => x.value === dateValue);
+    const base = d && d.slots ? d.slots.map((o) => o.label) : CONFIG.SLOTS.slice();
+    if (base.length > 1) base.push(CONFIG.ANY_SLOT_LABEL);
+    return base;
+  }
+  // 定員が2人以上の枠だけ「残り◯枠」を添える
+  function slotMeta(dateValue, label) {
+    const d = availDates().find((x) => x.value === dateValue);
+    const o = d && d.slots && d.slots.find((x) => x.label === label);
+    return o && o.capacity > 1 && o.remaining !== null ? "残り" + o.remaining + "枠" : "";
+  }
+
+  // ---------------------------------------------------------------- 画面の定義
+  const STEPS = [
+    { id: "intro", type: "intro" },
+    { id: "date1", type: "date", title: "第1希望の日にちは？", sub: "相談会は約60分・オンライン（Zoom）です。", any: true },
+    { id: "slot1", type: "single", title: "第1希望の時間帯は？", options: () => slotsFor(state.a.date1), meta: (l) => slotMeta(state.a.date1, l), visible: (a) => !!a.date1 && a.date1 !== "any", chosen: () => fmtDate(state.a.date1) },
+    { id: "date2", type: "date", title: "第2希望の日にち", sub: "第1希望が埋まっていたときのために。無ければスキップできます。", optional: true, skip: "第1希望だけでOK", visible: (a) => a.date1 !== "any" },
+    { id: "slot2", type: "single", title: "第2希望の時間帯は？", options: () => slotsFor(state.a.date2), meta: (l) => slotMeta(state.a.date2, l), visible: (a) => a.date1 !== "any" && !!a.date2, chosen: () => fmtDate(state.a.date2) },
+    { id: "status", type: "single", title: "現在の状況を教えてください", options: () => CONFIG.STATUS },
+    { id: "experience", type: "single", title: "AI副業の経験はありますか？", options: () => CONFIG.EXPERIENCE },
+    { id: "topics", type: "multi", title: "相談したいことは？", sub: "当てはまるものを全て選んでください（複数OK）", options: () => CONFIG.TOPICS },
+    { id: "goal", type: "single", title: "まず目指したい収入は？", options: () => CONFIG.GOALS },
+    { id: "confirm", type: "confirm" },
+    { id: "done", type: "done" },
+  ];
+  const idx = (id) => STEPS.findIndex((x) => x.id === id);
+  const isVisible = (s) => !s.visible || s.visible(state.a);
+  // 進捗の分母は途中で増減させない（第2希望をスキップしても 9 のまま。「どの日でもOK」のときだけ 6）
+  const questionSteps = () => STEPS.filter((s) => s.type !== "intro" && s.type !== "done" && (!s.visible || state.a.date1 !== "any"));
+
+  // ---------------------------------------------------------------- ナビゲーション
+  function render() {
+    clearTimeout(state.timer); state.timer = null;
+    const s = STEPS[state.i];
+    const main = $("#screen");
+    $(".app").dataset.screen = s.type;
+    main.classList.remove("anim");
+    void main.offsetWidth;
+    main.classList.add("anim");
+    main.innerHTML = VIEW[s.type](s);
+    const heading = main.querySelector(".q");
+    if (heading) {
+      const head = document.createElement("div"); head.className = "question-head";
+      main.insertBefore(head, main.firstChild);
+      const tag = main.querySelector(".tag"); if (tag) head.appendChild(tag);
+      head.appendChild(heading);
+      const sub = main.querySelector(".sub");
+      const helper = sub ? sub.textContent : "当てはまるものを1つ選んでください。";
+      if (sub) sub.remove();
+      const guide = document.createElement("div"); guide.className = "speaker question-guide";
+      guide.innerHTML = '<div class="speaker-avatar"><img src="' + HOST_AVATAR + '" alt="Yoichi"></div><div class="speech">' + esc(helper) + '</div>';
+      head.after(guide);
+    }
+    const phase = ["intro", "date"].includes(s.type) || ["slot1", "slot2"].includes(s.id) ? 0 : ["confirm", "done"].includes(s.type) ? 2 : 1;
+    $("#flow").innerHTML = ["希望日程", "ご相談内容", "内容確認"].map((label, i) => '<span class="' + (i === phase ? 'current' : i < phase ? 'complete' : '') + '"' + (i === phase ? ' aria-current="step"' : '') + '><b>' + (i < phase ? '✓' : i + 1) + '</b>' + label + '</span>').join('');
+    $("#flow").style.display = s.type === "intro" || s.type === "done" ? "none" : "";
+    $("#act").innerHTML = FOOT[s.type](s);
+    $("#back").hidden = !(s.type !== "intro" && s.type !== "done" && state.hist.length);
+    const qs = questionSteps(), n = qs.indexOf(s);
+    $("#cnt").textContent = n >= 0 ? (n + 1) + " / " + qs.length : "";
+    $("#bar").style.width = s.type === "done" ? "100%" : s.type === "intro" ? "0%" : Math.round(((n + 1) / qs.length) * 100) + "%";
+    window.scrollTo(0, 0);
+    bind(s);
+    main.querySelectorAll(".opt,.day").forEach((el) => el.setAttribute("aria-pressed", String(el.classList.contains("on"))));
+    if (s.type !== "intro") main.focus({ preventScroll: true });
+  }
+  function goTo(i, pushHist) {
+    if (pushHist !== false) state.hist.push(state.i);
+    state.i = i;
+    render();
+  }
+  function next() {
+    const cur = STEPS[state.i];
+    const r = state.editReturnAfter;
+    if (r && (cur.id === r || (r === "slot2" && cur.id === "date2" && !state.a.date2) || (r === "slot1" && cur.id === "date1" && state.a.date1 === "any"))) {
+      state.editReturnAfter = null;
+      return goTo(idx("confirm"));
+    }
+    let j = state.i + 1;
+    while (j < STEPS.length && !isVisible(STEPS[j])) j++;
+    goTo(j);
+  }
+  function scheduleNext() { clearTimeout(state.timer); state.timer = setTimeout(() => { state.timer = null; next(); }, 230); }
+  function back() {
+    if (!state.hist.length) return;
+    state.editReturnAfter = null;
+    state.i = state.hist.pop();
+    render();
+  }
+  function edit(id) {
+    state.editReturnAfter = id === "date1" ? "slot1" : id === "date2" ? "slot2" : id;
+    goTo(idx(id));
+  }
+  $("#back").addEventListener("click", back);
+
+  // ---------------------------------------------------------------- 画面テンプレート
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const optRow = (label, value, on, extra) => '<button type="button" class="opt' + (on ? " on" : "") + (extra && extra.multi ? " multi" : "") + '" data-v="' + esc(value) + '">' + (extra && extra.em ? '<span class="em" aria-hidden="true">' + extra.em + "</span>" : "") + '<span class="tx">' + esc(label) + (extra && extra.small ? "<small>" + esc(extra.small) + "</small>" : "") + '</span><span class="ic" aria-hidden="true"></span></button>';
+
+  const HOST_AVATAR = 'data:image/jpeg;base64,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';
+  const VIEW = {
+    intro() {
+      const p = state.profile;
+      return `<section class="intro-sheet">
+        <p class="intro-kicker">Yoichi 公式LINE限定</p>
+        <h1 class="disp">無料個別相談会<br><mark>お申込み</mark></h1>
+        <p class="intro-lead">AI × Claude Codeで、<br><b>まず月10万円を目指す第一歩を。</b></p>
+        <div class="lp-bar disp">あなた専用のロードマップを一緒に作ります</div>
+        <div class="speaker"><div class="speaker-avatar"><img src="${HOST_AVATAR}" alt="Yoichi"></div><div class="speech"><span class="speaker-name">Yoichi</span>今の状況や相談したいことを教えてください。<mark>あなたに合ったAI副業の始め方</mark>を一緒に考えます。</div></div>
+        <dl class="session-facts"><div><dt>参加費</dt><dd>無料<span>0円</span></dd></div><div><dt>開催方法</dt><dd>Zoom<span>1対1</span></dd></div><div><dt>所要時間</dt><dd>約60<span>分</span></dd></div></dl>
+        <div class="benefit"><div class="benefit-seal disp"><span>参加者限定</span><strong>10</strong><span>大特典</span></div><div><b>超豪華10大特典をプレゼント</b><p>相談会にご参加いただいた方へ<br>当日お渡しします。</p></div></div>
+      </section>` +
+      (p ? '<div class="hello"><div class="pic">' + (p.pictureUrl ? '<img src="' + esc(p.pictureUrl) + '" alt="">' : esc((p.displayName || "?").slice(0, 1))) + '</div><div><b>' + esc(p.displayName || '') + 'さん、こんにちは！</b><small>LINEのお名前で受け付けます。</small></div></div>' : '') +
+      `<section class="application-guide"><h2 class="guide-title disp">お申込みは、タップで約1分</h2><ol class="steps"><li><b>01</b><span>希望日程・相談内容を選択<small>文字の入力はありません</small></span></li><li><b>02</b><span>LINEで日程を確定<small>Yoichiからご連絡します</small></span></li><li><b>03</b><span>Zoomで相談・特典を受け取り<small>あなたの状況に合わせてお話しします</small></span></li></ol></section>`;
+    },
+    date(s) {
+      const v = state.a[s.id];
+      const head = '<span class="tag' + (s.optional ? " optional" : "") + '">' + (s.optional ? "任意" : "必須") + "</span>" +
+        '<h2 class="q disp">' + esc(s.title) + "</h2>" + (s.sub ? '<p class="sub">' + esc(s.sub) + "</p>" : "");
+      const anyRow = s.any ? '<div class="opts">' + optRow(CONFIG.ANY_DATE_LABEL, "any", v === "any", { em: "🗓" }) + "</div>" : "";
+      if (!state.avail) {
+        return head + '<div class="loading"><span class="spin" aria-hidden="true"></span><span>空き状況を確認しています…</span></div>' + anyRow;
+      }
+      const dates = availDates();
+      if (!dates.length) {
+        return head + '<div class="notice"><b>ただいま受付できる日がありません</b>' + (s.any ? "「" + esc(CONFIG.ANY_DATE_LABEL) + "」を選んでいただければ、LINEで日程をご相談します。" : "下の「" + esc(s.skip) + "」に進んでください。") + "</div>" + anyRow;
+      }
+      const grid = dates.map((d) => '<button type="button" class="day' + (d.wd === 6 ? " sat" : d.wd === 0 ? " sun" : "") + (v === d.value ? " on" : "") + '" data-v="' + d.value + '"><small>' + WD[d.wd] + "</small><b>" + d.m + "/" + d.d + "</b></button>").join("");
+      const first = dates[0], last = dates[dates.length - 1];
+      const hint = state.avail.source === "sheet" ? "空きのある日だけ表示しています" : s.any ? "この中に無ければ「どの日でもOK」を" : "無ければ下の「" + esc(s.skip) + "」を";
+      return head +
+        '<div class="legend"><span>' + first.m + "/" + first.d + "〜" + last.m + "/" + last.d + "</span><span>" + hint + "</span></div>" +
+        '<div class="dates">' + grid + "</div>" + anyRow;
+    },
+    single(s) {
+      const v = state.a[s.id];
+      return '<span class="tag">必須</span><h2 class="q disp">' + esc(s.title) + "</h2>" + (s.sub ? '<p class="sub">' + esc(s.sub) + "</p>" : "") +
+        (s.chosen ? '<span class="chosen">📅 ' + esc(s.chosen()) + "</span>" : "") +
+        '<div class="opts">' + s.options().map((o) => optRow(o, o, v === o, s.meta ? { small: s.meta(o) } : undefined)).join("") + "</div>";
+    },
+    multi(s) {
+      const v = state.a[s.id] || [];
+      return '<span class="tag">必須・複数OK</span><h2 class="q disp">' + esc(s.title) + "</h2>" + (s.sub ? '<p class="sub">' + esc(s.sub) + "</p>" : "") + '<div class="opts">' + s.options().map((o) => optRow(o, o, v.includes(o), { multi: true })).join("") + "</div>";
+    },
+    confirm() {
+      const a = state.a, p = state.profile;
+      const row = (k, v, id, small) => '<li><span class="k">' + k + '</span><span class="v">' + esc(v) + (small ? "<small>" + esc(small) + "</small>" : "") + "</span>" + (id ? '<button type="button" class="ed" data-edit="' + id + '">変更</button>' : "<span></span>") + "</li>";
+      const d1 = a.date1 === "any" ? CONFIG.ANY_DATE_LABEL : fmtDate(a.date1) + "　" + (a.slot1 || "");
+      const d2 = a.date1 === "any" ? "—" : a.date2 ? fmtDate(a.date2) + "　" + (a.slot2 || "") : "なし（第1希望だけ）";
+      return (
+        '<span class="tag">最終確認</span><h2 class="q disp">この内容で申し込みます</h2><p class="sub">間違いがあれば「変更」から直せます。</p>' +
+        '<ul class="sumlist">' +
+        (p ? '<li><span class="k">お名前</span><span class="v">' + esc(p.displayName || "") + "<small>LINEのお名前</small></span><span></span></li>" : "") +
+        row("第1希望", d1, "date1") + row("第2希望", d2, a.date1 === "any" ? "" : "date2") + row("現在の状況", a.status || "", "status") + row("AI副業の経験", a.experience || "", "experience") +
+        row("相談したいこと", (a.topics || []).join("、"), "topics") + row("目指す収入", a.goal || "", "goal") +
+        "</ul>" +
+        '<button type="button" class="consent' + (state.consent ? " on" : "") + '" id="consent" aria-pressed="' + (state.consent ? "true" : "false") + '"><span class="ic" aria-hidden="true"></span><span><b>個人情報の取り扱いに同意する</b>いただいた内容は、無料個別相談会のご案内と日程調整の目的にのみ使用し、第三者には提供しません。</span></button>' +
+        '<p class="tiny">※『10大特典』の受け取りは相談会の参加者のみです。※副業の成果には個人差があります。</p>'
+      );
+    },
+    done() {
+      const r = state.result || {}, hasId = !!(state.profile && state.profile.userId);
+      const recorded = r.posted === true || r.chatSent === true;
+      const lineUrl = oaMessageUrl();
+      const svg = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M12 2C6.5 2 2 5.7 2 10.2c0 4 3.6 7.4 8.4 8.1.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.5s5.9-3.5 8-6c1.5-1.6 2.2-3.2 2.2-5C22.3 5.7 17.5 2 12 2zM8.2 12.9H6.1c-.3 0-.5-.2-.5-.5V8.6c0-.3.2-.5.5-.5s.5.2.5.5v3.3h1.6c.3 0 .5.2.5.5s-.2.5-.5.5zm1.9-.5c0 .3-.2.5-.5.5s-.5-.2-.5-.5V8.6c0-.3.2-.5.5-.5s.5.2.5.5v3.8zm4.7 0c0 .2-.1.4-.3.5h-.2c-.2 0-.3-.1-.4-.2l-2-2.7v2.4c0 .3-.2.5-.5.5s-.5-.2-.5-.5V8.6c0-.2.1-.4.3-.5h.2c.2 0 .3.1.4.2l2 2.7V8.6c0-.3.2-.5.5-.5s.5.2.5.5v3.8zm3.4-2.4c.3 0 .5.2.5.5s-.2.5-.5.5h-1.6v1h1.6c.3 0 .5.2.5.5s-.2.5-.5.5h-2.1c-.3 0-.5-.2-.5-.5V8.6c0-.3.2-.5.5-.5h2.1c.3 0 .5.2.5.5s-.2.5-.5.5h-1.6v1h1.6z"/></svg>';
+      const failNote = r.posted === false ? "通信の都合で自動送信ができませんでした。" : "";
+      let body = "";
+      if (hasId && recorded) {
+        body =
+          '<div class="check disp" aria-hidden="true">✓</div><h2 class="disp">お申込みを受け付けました！</h2>' +
+          '<span class="rcpt">受付番号 ' + esc(state.receipt) + "</span>" +
+          '<p class="lead">日程が決まり次第、<b>この公式LINEのトーク</b>にご連絡します。返信は不要です。少々お待ちください。</p>';
+      } else if (lineUrl) {
+        body =
+          '<div class="check warn disp" aria-hidden="true">!</div><h2 class="disp">あと1ステップで完了です</h2>' +
+          '<span class="rcpt">受付番号 ' + esc(state.receipt) + "</span>" +
+          '<p class="lead">' + failNote + "下のボタンを押すと<b>LINEが開き、申込内容が入力された状態</b>になります。そのまま送信すれば申込完了です。日程はそのトークでご連絡します。</p>" +
+          '<a class="btn-line disp" href="' + esc(lineUrl) + '">' + svg + "LINEで申込内容を送る</a>" +
+          '<p class="tiny">LINEが開かない場合は、下の申込内容をコピーして公式LINEに貼り付けて送ってください。</p>';
+      } else {
+        body =
+          '<div class="check warn disp" aria-hidden="true">!</div><h2 class="disp">あと1ステップで完了です</h2>' +
+          '<span class="rcpt">受付番号 ' + esc(state.receipt) + "</span>" +
+          '<p class="lead">' + failNote + "下の「コピー」を押して、" + esc(CONFIG.HOST_NAME) + "の公式LINEに貼り付けて送ってください。それで申込完了です。日程はそのトークでご連絡します。</p>";
+      }
+      const showSummary = !(hasId && recorded);
+      return (
+        '<div class="done">' + body +
+        (showSummary ? '<div class="summary"><div class="summary-h disp"><span>申込内容</span><button type="button" id="copy">コピー</button></div><textarea id="summary" readonly rows="9" aria-label="申込内容">' + esc(summaryText()) + "</textarea></div>" : "") +
+        '<p class="gift"><b>超豪華10大特典</b>は、相談会にご参加いただいた方に当日お渡しします。</p></div>'
+      );
+    },
+  };
+
+  const FOOT = {
+    intro: () => '<div class="inner"><button type="button" class="btn pri" data-act="next">希望日程を選ぶ →</button></div>',
+    date: (s) => '<div class="inner">' + (s.optional ? '<button type="button" class="btn sec" data-act="skip">' + esc(s.skip) + "</button>" : "") + '<button type="button" class="btn pri" data-act="next"' + (state.a[s.id] ? "" : " disabled") + ">次へ →</button></div>",
+    single: (s) => '<div class="inner"><button type="button" class="btn pri" data-act="next"' + (state.a[s.id] && s.options().includes(state.a[s.id]) ? "" : " disabled") + ">次へ →</button></div>",
+    multi: (s) => '<div class="inner"><button type="button" class="btn pri" data-act="next"' + ((state.a[s.id] || []).length ? "" : " disabled") + ">次へ →</button></div>",
+    confirm: () => '<div class="inner"><button type="button" class="btn pri" id="submit" data-act="submit"' + (state.consent ? "" : " disabled") + ">この内容で申し込む →</button></div>",
+    done: () => (state.liffReady && state.inClient && state.result && (state.result.posted || state.result.chatSent) ? '<div class="inner"><button type="button" class="btn pri" data-act="close">閉じる</button></div>' : ""),
+  };
+
+  // ---------------------------------------------------------------- 操作
+  function bind(s) {
+    const main = $("#screen");
+    if (s.type === "date") {
+      main.querySelectorAll(".day,.opt").forEach((el) => el.addEventListener("click", () => {
+        const v = el.dataset.v;
+        if (state.a[s.id] !== v) {
+          state.a[s.id] = v;
+          state.a[s.id === "date1" ? "slot1" : "slot2"] = ""; // 日を変えたら時間帯は選び直し
+          if (s.id === "date1" && v === "any") { state.a.date2 = ""; state.a.slot2 = ""; }
+        }
+        main.querySelectorAll(".day,.opt").forEach((x) => x.classList.toggle("on", x === el));
+        enableNext(true);
+        main.querySelectorAll(".opt,.day").forEach((x) => x.setAttribute("aria-pressed", String(x.classList.contains("on"))));
+      }));
+    } else if (s.type === "single") {
+      main.querySelectorAll(".opt").forEach((el) => el.addEventListener("click", () => {
+        state.a[s.id] = el.dataset.v;
+        main.querySelectorAll(".opt").forEach((x) => x.classList.toggle("on", x === el));
+        enableNext(true);
+        main.querySelectorAll(".opt,.day").forEach((x) => x.setAttribute("aria-pressed", String(x.classList.contains("on"))));
+      }));
+    } else if (s.type === "multi") {
+      main.querySelectorAll(".opt").forEach((el) => el.addEventListener("click", () => {
+        const opts = s.options(), cur = new Set(state.a[s.id] || []);
+        const v = el.dataset.v, lastNone = opts[opts.length - 1];
+        cur.has(v) ? cur.delete(v) : cur.add(v);
+        if (v === lastNone && cur.has(v)) { cur.clear(); cur.add(v); } else cur.delete(lastNone);
+        state.a[s.id] = opts.filter((o) => cur.has(o));
+        main.querySelectorAll(".opt").forEach((x) => x.classList.toggle("on", cur.has(x.dataset.v)));
+        main.querySelectorAll(".opt").forEach((x) => x.setAttribute("aria-pressed", String(x.classList.contains("on"))));
+        enableNext(cur.size > 0);
+      }));
+    } else if (s.type === "confirm") {
+      main.querySelectorAll("[data-edit]").forEach((el) => el.addEventListener("click", () => edit(el.dataset.edit)));
+      $("#consent").addEventListener("click", () => {
+        state.consent = !state.consent;
+        $("#consent").classList.toggle("on", state.consent);
+        $("#consent").setAttribute("aria-pressed", state.consent ? "true" : "false");
+        enableNext(state.consent);
+      });
+    } else if (s.type === "done") {
+      const c = $("#copy");
+      if (c) c.addEventListener("click", copySummary);
+    }
+    $("#act").querySelectorAll("[data-act]").forEach((el) => el.addEventListener("click", () => {
+      const act = el.dataset.act;
+      if (act === "next") { if (canProceed(s)) { clearTimeout(state.timer); state.timer = null; next(); } }
+      else if (act === "skip") { state.a[s.id] = ""; state.a.slot2 = ""; clearTimeout(state.timer); state.timer = null; next(); }
+      else if (act === "submit") submit();
+      else if (act === "close") { try { liff.closeWindow(); } catch (e) {} }
+    }));
+  }
+  function canProceed(s) {
+    if (s.type === "intro") return true;
+    if (s.type === "date") return !!state.a[s.id];
+    if (s.type === "single") return !!state.a[s.id] && s.options().includes(state.a[s.id]);
+    if (s.type === "multi") return (state.a[s.id] || []).length > 0;
+    return true;
+  }
+  function enableNext(on) {
+    const b = $("#act [data-act=next],#act [data-act=submit]");
+    if (b) b.disabled = on === false;
+  }
+
+  // ---------------------------------------------------------------- 送信
+  function makeReceipt() { return "R-" + Date.now().toString(36).slice(-5).toUpperCase(); }
+  function summaryText() {
+    const a = state.a, L = ["【無料個別相談会 申込】受付番号 " + state.receipt];
+    if (state.profile && state.profile.displayName) L.push("お名前：" + state.profile.displayName);
+    L.push("第1希望：" + (a.date1 === "any" ? CONFIG.ANY_DATE_LABEL : fmtDate(a.date1) + " " + (a.slot1 || "")));
+    if (a.date1 !== "any") L.push("第2希望：" + (a.date2 ? fmtDate(a.date2) + " " + (a.slot2 || "") : "なし"));
+    L.push("現在：" + (a.status || ""));
+    L.push("AI副業の経験：" + (a.experience || ""));
+    L.push("相談したいこと：" + (a.topics || []).join("／"));
+    L.push("目指す収入：" + (a.goal || ""));
+    return L.join("\n");
+  }
+  function payload() {
+    const a = state.a, p = state.profile || {};
+    return {
+      receipt: state.receipt, name: p.displayName || "", userId: p.userId || "", picture: p.pictureUrl || "",
+      date1: a.date1 === "any" ? "どの日でもOK" : a.date1 || "", slot1: a.slot1 || "", date2: a.date2 || "", slot2: a.slot2 || "",
+      status: a.status || "", experience: a.experience || "", topics: (a.topics || []).join("／"), goal: a.goal || "",
+      src: state.src, inLine: !!state.inClient, availSource: state.avail ? state.avail.source : "", page: location.href.split("?")[0], createdAt: new Date().toISOString(),
+    };
+  }
+  function oaMessageUrl() {
+    const id = (CONFIG.LINE_ID || "").trim();
+    if (!id) return "";
+    return "https://line.me/R/oaMessage/" + encodeURIComponent(id.startsWith("@") ? id : "@" + id) + "/?" + encodeURIComponent(summaryText());
+  }
+  async function submit() {
+    if (state.busy || !state.consent) return;
+    state.busy = true;
+    const btn = $("#submit");
+    if (btn) { btn.disabled = true; btn.textContent = "送信中…"; }
+    state.receipt = state.receipt || makeReceipt();
+    let posted = null, chatSent = false;
+    if (CONFIG.POST_URL) {
+      try {
+        const ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
+        const t = ctrl ? setTimeout(() => ctrl.abort(), 15000) : null;
+        await fetch(CONFIG.POST_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload()), signal: ctrl ? ctrl.signal : undefined });
+        if (t) clearTimeout(t);
+        posted = true;
+      } catch (e) { posted = false; }
+    }
+    if (state.liffReady && state.inClient) {
+      try { await liff.sendMessages([{ type: "text", text: summaryText() }]); chatSent = true; } catch (e) { chatSent = false; }
+    }
+    state.result = { posted, chatSent };
+    state.busy = false;
+    goTo(idx("done"));
+  }
+  async function copySummary() {
+    const ta = $("#summary"), b = $("#copy");
+    let ok = false;
+    // https で開いているときの標準の方法
+    try {
+      if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(ta.value); ok = true; }
+    } catch (e) { ok = false; }
+    // ファイルを直接開いたときや iOS Safari 用（readonly のままだと選択できない）
+    if (!ok) {
+      const wasReadOnly = ta.readOnly;
+      try {
+        ta.readOnly = false;
+        ta.contentEditable = "true";
+        const range = document.createRange();
+        range.selectNodeContents(ta);
+        const sel = window.getSelection();
+        if (sel) { sel.removeAllRanges(); sel.addRange(range); }
+        ta.setSelectionRange(0, ta.value.length);
+        ok = document.execCommand("copy");
+      } catch (e) { ok = false; }
+      try { ta.contentEditable = "false"; ta.readOnly = wasReadOnly; } catch (e) {}
+      if (ok) { try { ta.blur(); } catch (e) {} } // コピーできたら選択は解除
+    }
+    b.textContent = ok ? "コピーしました" : "長押しで選択してください";
+    b.classList.toggle("ok", ok);
+    setTimeout(() => { b.textContent = "コピー"; b.classList.remove("ok"); }, 2500);
+  }
+
+  // ---------------------------------------------------------------- LIFF（LINEの中で開いたとき）
+  async function initLiff() {
+    if (params.get("demo") === "liff") { // 見た目の確認用（本番では使わない）
+      state.profile = { displayName: "テスト 太郎", userId: "Udemo", pictureUrl: "" };
+      state.liffReady = true;
+      return render();
+    }
+    if (!CONFIG.LIFF_ID || !window.liff) return;
+    try {
+      await liff.init({ liffId: CONFIG.LIFF_ID });
+      state.inClient = liff.isInClient();
+      if (!liff.isLoggedIn()) {
+        if (state.inClient || CONFIG.LOGIN_OUTSIDE_LINE) { liff.login({ redirectUri: location.href }); return; }
+        return;
+      }
+      state.profile = await liff.getProfile();
+      state.liffReady = true;
+      if (STEPS[state.i].type === "intro") render();
+    } catch (e) { console.warn("LIFF init failed", e); }
+  }
+
+  render();
+  loadAvailability();
+  initLiff();
+  // 見た目・動作の確認用フック（本番の動作には関係しない）
+  window.__soudan = { state, setProfile(p) { state.profile = p; state.liffReady = true; render(); }, loadAvailability, setAvail, render };
+})();
+</script>
+
+</body>
+</html>
